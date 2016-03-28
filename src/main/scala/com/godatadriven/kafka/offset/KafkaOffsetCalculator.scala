@@ -23,6 +23,10 @@ class KafkaOffsetCalculator {
     println(getTopicOffset())
   }
 
+  def closeSimpleConsumers(simpleConsumers: Map[String, SimpleConsumer]) =  {
+    simpleConsumers.foreach(_._2.close())
+  }
+
   def getTopicOffset(): String = {
     var result = new StringBuilder
 
@@ -30,19 +34,23 @@ class KafkaOffsetCalculator {
     val simpleConsumers = createConsumers(zookeeper)
     val topicsConsumers = getTopicConsumers(zookeeper)
     topicsConsumers.foreach(topic => {
-      topic._2.foreach(topicConsumer => {
-        getPartitionsAndLeaders(zookeeper, topicConsumer._1, simpleConsumers).foreach(partitionsAndLeader => {
+      val partitionsAndLeaders: mutable.Buffer[(String, SimpleConsumer)] = getPartitionsAndLeaders(zookeeper, topic._1, simpleConsumers)
+      partitionsAndLeaders.foreach(partitionsAndLeader => {
+        val topicAndPartition: TopicAndPartition = TopicAndPartition(topic._1, partitionsAndLeader._1.toInt)
+        val offsetResponse: OffsetResponse = partitionsAndLeader._2.getOffsetsBefore(OffsetRequest(immutable.Map(topicAndPartition -> PartitionOffsetRequestInfo(OffsetRequest.LatestTime, 1))))
+        val logSize: Long = offsetResponse.partitionErrorAndOffsets(topicAndPartition).offsets.head
+        result ++= "kafka_logSize{topic=\"%s\",partition=\"%s\"} %d\n".format(topic._1, partitionsAndLeader._1, logSize)
+        topic._2.foreach(topicConsumer => {
           val consumerId: String = topicConsumer._2
-
-          val topicAndPartition: TopicAndPartition = TopicAndPartition(topicConsumer._1, partitionsAndLeader._1.toInt)
-          val offsetResponse: OffsetResponse = partitionsAndLeader._2.getOffsetsBefore(OffsetRequest(immutable.Map(topicAndPartition -> PartitionOffsetRequestInfo(OffsetRequest.LatestTime, 1))))
-          val logSize: Long = offsetResponse.partitionErrorAndOffsets(topicAndPartition).offsets.head
           val offset: Long = getConsumerOffset(zookeeper, consumerId, topicConsumer._1, partitionsAndLeader._1)
-          result ++= "topic: %s group: %s, partition %s logSize: %d offset: %d, lag: %d\n".format(topicConsumer._1, consumerId, partitionsAndLeader._1, logSize, offset, logSize - offset)
+          result ++= "kafka_offset{topic=\"%s\",consumer=\"%s\",partition=\"%s\"} %d\n".format(topicConsumer._1, consumerId, partitionsAndLeader._1, offset)
+          result ++= "kafka_lag{topic=\"%s\",consumer=\"%s\",partition=\"%s\"} %d\n".format(topicConsumer._1, consumerId, partitionsAndLeader._1, logSize - offset)
         })
       })
     })
-//    result ++= "\n"
+    zookeeper.close()
+    closeSimpleConsumers(simpleConsumers)
+    result ++= "\n"
     result.toString
   }
 
