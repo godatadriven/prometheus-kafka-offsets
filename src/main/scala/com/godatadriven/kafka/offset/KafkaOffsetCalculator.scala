@@ -13,9 +13,8 @@ import scala.collection.JavaConversions._
 import scala.collection.{immutable, mutable}
 
 class KafkaOffsetCalculator {
-  val ZOOKEEPER_URL = "localhost:2181"
-
   val gson = new GsonBuilder().create()
+  val zookeeperUrl = System.getProperty("zookeeper_url");
 
   def main(args: Array[String]) {
     println(getTopicOffset())
@@ -26,9 +25,10 @@ class KafkaOffsetCalculator {
   }
 
   def getTopicOffset(): String = {
+
     var result = new StringBuilder
 
-    val zookeeper: ZooKeeper = new ZooKeeper(ZOOKEEPER_URL, 10000, null, true)
+    val zookeeper: ZooKeeper = new ZooKeeper(zookeeperUrl, 10000, null, true)
     val simpleConsumers = createConsumers(zookeeper)
     val topicsConsumers = getTopicConsumers(zookeeper)
     topicsConsumers.foreach(topic => {
