@@ -1,3 +1,7 @@
+import sbtassembly.AssemblyPlugin.autoImport._
+import spray.revolver.RevolverPlugin.Revolver
+
+
 name := "prometheus-kafka-offsets"
 
 version := "1.0"
@@ -19,3 +23,10 @@ libraryDependencies += "io.spray" %% "spray-httpx" % sprayV
 libraryDependencies += "com.typesafe.akka" %% "akka-actor" % akkaV
 libraryDependencies += "com.typesafe.akka" %% "akka-testkit" % akkaV % "test"
 libraryDependencies += "org.specs2" %% "specs2-core" % "2.3.7" % "test"
+
+enablePlugins(JavaServerAppPackaging)
+
+//fullClasspath in Revolver.reStart ++= (fullClasspath in Compile).value
+
+mainClass := Some("com.godatadriven.kafka.offset.Boot")
+assemblyJarName in assembly := "prometheus-kafka.jar"
