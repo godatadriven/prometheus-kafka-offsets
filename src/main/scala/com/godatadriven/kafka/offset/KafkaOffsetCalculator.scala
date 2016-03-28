@@ -6,7 +6,6 @@ import com.google.gson.GsonBuilder
 import kafka.api.{OffsetRequest, OffsetResponse, PartitionOffsetRequestInfo}
 import kafka.common.TopicAndPartition
 import kafka.consumer.SimpleConsumer
-import org.apache.kafka.common.protocol.SecurityProtocol
 import org.apache.zookeeper.KeeperException.NoNodeException
 import org.apache.zookeeper.ZooKeeper
 
@@ -14,7 +13,6 @@ import scala.collection.JavaConversions._
 import scala.collection.{immutable, mutable}
 
 class KafkaOffsetCalculator {
-  val SECURITYPROTOCOL = SecurityProtocol.PLAINTEXT
   val ZOOKEEPER_URL = "localhost:2181"
 
   val gson = new GsonBuilder().create()
@@ -97,7 +95,7 @@ class KafkaOffsetCalculator {
       val brokerInfoJson: String = new String(zookeeper.getData("/brokers/ids/" + id, false, null))
 
       val brokerInfo = gson.fromJson(brokerInfoJson, classOf[BrokerInfo])
-      (id -> new SimpleConsumer(brokerInfo.host, brokerInfo.port, 10000, 100000, "consumerOffsetChecker", SECURITYPROTOCOL))
+      (id -> new SimpleConsumer(brokerInfo.getHost, brokerInfo.getPort, 10000, 100000, "consumerOffsetChecker", brokerInfo.getSecurityProtocol))
     }).toMap
   }
 }
