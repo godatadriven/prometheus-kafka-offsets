@@ -48,7 +48,7 @@ object KafkaOffsetCalculator {
               result ++= "kafka_lag{topic=\"%s\",consumer=\"%s\",partition=\"%s\"} %d\n".format(topicConsumer._1, consumerId, partitionsAndLeader._1, size - offset)
             })
           }
-          case _ => // there is no logSize so cannot log...
+          case _ => println("No logSize found for topic: %s and partition: %s".format(topic._1, partitionsAndLeader._1))
         }
       })
     })
