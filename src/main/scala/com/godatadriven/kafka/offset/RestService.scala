@@ -47,5 +47,4 @@ trait RestService extends HttpService {
           }
         }
       }
-
 }
