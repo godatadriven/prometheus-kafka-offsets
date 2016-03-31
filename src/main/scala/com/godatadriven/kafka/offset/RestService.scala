@@ -27,15 +27,11 @@ trait RestService extends HttpService {
     path("") {
       get {
         respondWithMediaType(`text/html`) {
-          // XML is marshalled to `text/xml` by default, so we simply override here
           complete {
             <html>
               <body>
-                <h1>Say hello to
-                  <i>spray-routing</i>
-                  on
-                  <i>spray-can</i>
-                  !</h1>
+                <h1>Prometheus Kafka-offset exporter</h1>
+                <a href="/metrics">Metrics</a>
               </body>
             </html>
           }
