@@ -14,18 +14,17 @@ import scala.collection.{immutable, mutable}
 
 object KafkaOffsetCalculator {
   val gson = new GsonBuilder().create()
-  val zookeeperUrl = System.getProperty("zookeeper_url", "localhost:2181");
+  val zookeeperUrl = System.getProperty("zookeeper_url", "localhost:2181")
 
   def main(args: Array[String]) {
-    println(getTopicOffset())
+    println(getTopicOffset)
   }
 
   def closeSimpleConsumers(simpleConsumers: Map[String, SimpleConsumer]) =  {
     simpleConsumers.foreach(_._2.close())
   }
 
-  def getTopicOffset(): String = {
-
+  def getTopicOffset: String = {
     var result = new StringBuilder
 
     val zookeeper: ZooKeeper = new ZooKeeper(zookeeperUrl, 10000, null, true)
@@ -39,7 +38,7 @@ object KafkaOffsetCalculator {
 
         val logSize = offsetResponse.partitionErrorAndOffsets(topicAndPartition).offsets.headOption
         logSize match {
-          case Some(size) => {
+          case Some(size) =>
             result ++= "kafka_logSize{topic=\"%s\",partition=\"%s\"} %d\n".format(topic._1, partitionsAndLeader._1, size)
             topic._2.foreach(topicConsumer => {
               val consumerId: String = topicConsumer._2
@@ -47,7 +46,6 @@ object KafkaOffsetCalculator {
               result ++= "kafka_offset{topic=\"%s\",consumer=\"%s\",partition=\"%s\"} %d\n".format(topicConsumer._1, consumerId, partitionsAndLeader._1, offset)
               result ++= "kafka_lag{topic=\"%s\",consumer=\"%s\",partition=\"%s\"} %d\n".format(topicConsumer._1, consumerId, partitionsAndLeader._1, size - offset)
             })
-          }
           case _ => println("No logSize found for topic: %s and partition: %s".format(topic._1, partitionsAndLeader._1))
         }
       })
@@ -70,7 +68,7 @@ object KafkaOffsetCalculator {
 
   def getTopics(zookeeper: ZooKeeper, consumer: String): mutable.Buffer[(String, String)] = {
     try {
-      return zookeeper.getChildren("/consumers/%s/offsets".format(consumer), false).map((_, consumer))
+      zookeeper.getChildren("/consumers/%s/offsets".format(consumer), false).map((_, consumer))
     } catch {
       case e: NoNodeException =>
         mutable.Buffer.empty
@@ -91,7 +89,7 @@ object KafkaOffsetCalculator {
     children.map(id => {
       val partitionJson: String = new String(zookeeper.getData("/brokers/topics/%s/partitions/%s/state".format(topic, id), false, null))
       val partitionInfo = gson.fromJson(partitionJson, classOf[PartitionInfo])
-      (id -> consumers.get(partitionInfo.leader).get)
+      id -> consumers.get(partitionInfo.leader).get
     })
   }
 
@@ -101,7 +99,7 @@ object KafkaOffsetCalculator {
       val brokerInfoJson: String = new String(zookeeper.getData("/brokers/ids/" + id, false, null))
 
       val brokerInfo = gson.fromJson(brokerInfoJson, classOf[BrokerInfo])
-      (id -> new SimpleConsumer(brokerInfo.getHost, brokerInfo.getPort, 10000, 100000, "consumerOffsetChecker", brokerInfo.getSecurityProtocol))
+      id -> new SimpleConsumer(brokerInfo.getHost, brokerInfo.getPort, 10000, 100000, "consumerOffsetChecker", brokerInfo.getSecurityProtocol)
     }).toMap
   }
 }
