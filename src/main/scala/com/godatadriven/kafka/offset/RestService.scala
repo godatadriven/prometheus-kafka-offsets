@@ -2,7 +2,6 @@ package com.godatadriven.kafka.offset
 
 import akka.actor.Actor
 import spray.http.MediaTypes._
-import spray.http._
 import spray.routing._
 
 // we don't implement our route structure directly in the service actor because
