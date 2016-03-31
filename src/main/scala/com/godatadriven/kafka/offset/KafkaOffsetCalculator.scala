@@ -12,6 +12,8 @@ import org.apache.zookeeper.ZooKeeper
 import scala.collection.JavaConversions._
 import scala.collection.{immutable, mutable}
 
+case class PartitionInfo(leader: String)
+
 object KafkaOffsetCalculator {
   val gson = new GsonBuilder().create()
   val zookeeperUrl = System.getProperty("zookeeper_url", "localhost:2181")
