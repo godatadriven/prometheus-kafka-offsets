@@ -8,6 +8,8 @@ import akka.util.Timeout
 import scala.concurrent.duration._
 
 object Boot extends App {
+  val interface = System.getProperty("interface", "127.0.0.1")
+  val port = System.getProperty("port", "8000").toInt
 
   // we need an ActorSystem to host our application in
   implicit val system = ActorSystem("on-spray-can")
@@ -17,5 +19,5 @@ object Boot extends App {
 
   implicit val timeout = Timeout(5.seconds)
   // start a new HTTP server on port 8080 with our service actor as the handler
-  IO(Http) ? Http.Bind(service, interface = "0.0.0.0", port = 8000)
+  IO(Http) ? Http.Bind(service, interface = interface, port = port)
 }
