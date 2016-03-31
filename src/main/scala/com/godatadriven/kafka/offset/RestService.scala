@@ -47,7 +47,7 @@ trait RestService extends HttpService {
           respondWithMediaType(`text/plain`) {
             // XML is marshalled to `text/xml` by default, so we simply override here
             complete {
-              new KafkaOffsetCalculator().getTopicOffset
+              KafkaOffsetCalculator.getTopicOffset
             }
           }
         }

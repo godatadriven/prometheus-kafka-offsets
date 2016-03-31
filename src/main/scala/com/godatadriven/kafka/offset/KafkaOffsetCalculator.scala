@@ -12,9 +12,9 @@ import org.apache.zookeeper.ZooKeeper
 import scala.collection.JavaConversions._
 import scala.collection.{immutable, mutable}
 
-class KafkaOffsetCalculator {
+object KafkaOffsetCalculator {
   val gson = new GsonBuilder().create()
-  val zookeeperUrl = System.getProperty("zookeeper_url");
+  val zookeeperUrl = System.getProperty("zookeeper_url", "localhost:2181");
 
   def main(args: Array[String]) {
     println(getTopicOffset())
@@ -36,14 +36,20 @@ class KafkaOffsetCalculator {
       partitionsAndLeaders.foreach(partitionsAndLeader => {
         val topicAndPartition: TopicAndPartition = TopicAndPartition(topic._1, partitionsAndLeader._1.toInt)
         val offsetResponse: OffsetResponse = partitionsAndLeader._2.getOffsetsBefore(OffsetRequest(immutable.Map(topicAndPartition -> PartitionOffsetRequestInfo(OffsetRequest.LatestTime, 1))))
-        val logSize: Long = offsetResponse.partitionErrorAndOffsets(topicAndPartition).offsets.head
-        result ++= "kafka_logSize{topic=\"%s\",partition=\"%s\"} %d\n".format(topic._1, partitionsAndLeader._1, logSize)
-        topic._2.foreach(topicConsumer => {
-          val consumerId: String = topicConsumer._2
-          val offset: Long = getConsumerOffset(zookeeper, consumerId, topicConsumer._1, partitionsAndLeader._1)
-          result ++= "kafka_offset{topic=\"%s\",consumer=\"%s\",partition=\"%s\"} %d\n".format(topicConsumer._1, consumerId, partitionsAndLeader._1, offset)
-          result ++= "kafka_lag{topic=\"%s\",consumer=\"%s\",partition=\"%s\"} %d\n".format(topicConsumer._1, consumerId, partitionsAndLeader._1, logSize - offset)
-        })
+
+        val logSize = offsetResponse.partitionErrorAndOffsets(topicAndPartition).offsets.headOption
+        logSize match {
+          case Some(size) => {
+            result ++= "kafka_logSize{topic=\"%s\",partition=\"%s\"} %d\n".format(topic._1, partitionsAndLeader._1, size)
+            topic._2.foreach(topicConsumer => {
+              val consumerId: String = topicConsumer._2
+              val offset: Long = getConsumerOffset(zookeeper, consumerId, topicConsumer._1, partitionsAndLeader._1)
+              result ++= "kafka_offset{topic=\"%s\",consumer=\"%s\",partition=\"%s\"} %d\n".format(topicConsumer._1, consumerId, partitionsAndLeader._1, offset)
+              result ++= "kafka_lag{topic=\"%s\",consumer=\"%s\",partition=\"%s\"} %d\n".format(topicConsumer._1, consumerId, partitionsAndLeader._1, size - offset)
+            })
+          }
+          case _ => // there is no logSize so cannot log...
+        }
       })
     })
     zookeeper.close()
