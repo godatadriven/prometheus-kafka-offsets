@@ -23,7 +23,7 @@ class BrokerInfo(private[this] val endpoints: Array[String],
   }
 
   def getHost: String = {
-    if (host.isEmpty) {
+    if (host == null || host.isEmpty) {
       firstEndpointUri.head.getHost
     } else {
       host

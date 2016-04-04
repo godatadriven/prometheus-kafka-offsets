@@ -12,8 +12,12 @@ class BrokerInfoTest extends Specification {
       val brokerInfo = gson.fromJson("{\"jmx_port\":-1,\"timestamp\":\"1459185255551\",\"host\":\"ron\",\"version\":1,\"port\":9092}", classOf[BrokerInfo])
       brokerInfo.getHost must equalTo("ron")
     }
-    "return host if endpoinst is filled" >> {
+    "return host if endpoint is filled" >> {
       val brokerInfo = gson.fromJson("{\"jmx_port\":-1,\"timestamp\":\"1459185255551\",\"endpoints\": [\"PLAINTEXTSASL://ron:9092\"],\"host\":\"\",\"version\":1,\"port\":-1}", classOf[BrokerInfo])
+      brokerInfo.getHost must equalTo("ron")
+    }
+    "return host if endpoint is filled and host is null" >> {
+      val brokerInfo = gson.fromJson("{\"jmx_port\":-1,\"timestamp\":\"1459185255551\",\"endpoints\": [\"PLAINTEXTSASL://ron:9092\"],\"host\": null,\"version\":1,\"port\":-1}", classOf[BrokerInfo])
       brokerInfo.getHost must equalTo("ron")
     }
   }
