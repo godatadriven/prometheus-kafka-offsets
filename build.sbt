@@ -23,6 +23,7 @@ libraryDependencies += "io.spray" %% "spray-httpx" % sprayV
 libraryDependencies += "com.typesafe.akka" %% "akka-actor" % akkaV
 libraryDependencies += "com.typesafe.akka" %% "akka-testkit" % akkaV % "test"
 libraryDependencies += "org.specs2" %% "specs2-core" % "2.3.7" % "test"
+libraryDependencies += "com.jsuereth" %% "scala-arm" % "1.4"
 
 enablePlugins(JavaServerAppPackaging)
 
