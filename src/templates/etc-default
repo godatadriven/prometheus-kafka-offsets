@@ -1,0 +1,47 @@
+# #####################################
+# ##### Environment Configuration #####
+# #####################################
+
+# This file gets sourced before the actual bashscript
+# gets executed. You can use this file to provide
+# environment variables
+
+# Available replacements
+# ------------------------------------------------
+# ${{author}}			debian author
+# ${{descr}}			debian package description
+# ${{exec}}				startup script name
+# ${{chdir}}			app directory
+# ${{retries}}			retries for startup
+# ${{retryTimeout}}		retry timeout
+# ${{app_name}}			normalized app name
+# ${{daemon_user}}		daemon user
+# -------------------------------------------------
+
+# Setting JAVA_OPTS
+# -----------------
+# JAVA_OPTS="-Dpidfile.path=/var/run/${{app_name}}/play.pid $JAVA_OPTS"
+JAVA_OPTS="x-Dinterface=0.0.0.0 -Djava.security.auth.login.config=/usr/share/prometheus-kafka-offsets/conf/prometheus-kafka-offsets-jaas.conf"
+
+# Setting PIDFILE
+# ---------------
+# PIDFILE="/var/run/${{app_name}}/play.pid"
+
+# export env vars for search service app
+# ----------------------------------
+# MANDATORY SETTINGS
+#
+# export SEARCH_SERVICE_HTTP_BIND=<hostname or ip>
+# export ELASTICSEARCH_HOSTS_LIST="host1:9300,host2:9300,host3:9300"
+#
+# OPTIONAL SETTINGS
+#
+# export SEARCH_SERVICE_HTTP_PORT=<port> # default is 8200
+# export LOGSTASH_SYSLOG_HOST=<logstash server>
+# export LOGSTASH_SYSLOG_PORT=<logstash port>
+# export LOGLEVEL_ROOT=debug # default is info
+# export LOGLEVEL_AKKA=debug # default is info
+# export LOGLEVEL_SPRAY=debug # default is info
+# export LOGLEVEL_APP=debug # default is info
+
+
