@@ -12,12 +12,12 @@ import resource._
 
 import scala.collection.JavaConversions._
 import scala.collection.{immutable, mutable}
+import com.typesafe.config.{ConfigFactory}
 
 case class PartitionInfo(leader: String)
 
 object KafkaOffsetCalculator {
   val gson = new GsonBuilder().create()
-  val zookeeperUrl = System.getProperty("zookeeper_url", "localhost:2181")
 
   def main(args: Array[String]) {
     println(getTopicOffset)
@@ -25,6 +25,8 @@ object KafkaOffsetCalculator {
 
   def getTopicOffset: String = {
     val result = new StringBuilder
+    val config = ConfigFactory.load
+    val zookeeperUrl = config.getString("zookeeper.url")
 
     managed(new ZooKeeper(zookeeperUrl, 10000, null, true)) acquireAndGet {
       zookeeper => managed(new SimpleConsumers(zookeeper)) acquireAndGet {

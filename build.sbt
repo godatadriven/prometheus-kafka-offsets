@@ -53,7 +53,10 @@ mappings in Universal <+= (packageBin in Compile, sourceDirectory ) map { (_, sr
   src / "main" / "resources" / "application.conf" -> "conf/app.conf"
 }
 
-bashScriptExtraDefines += """addJava "-Dconfig.file=${app_home}/../conf/app.config""""
+bashScriptExtraDefines ++= Seq(
+  """addJava "-Dconfig.file=${app_home}/../conf/app.conf"""",
+  """addJava "-Djava.security.auth.login.config=/usr/share/prometheus-kafka-offsets/conf/prometheus-kafka-offsets-jaas.conf""""
+)
 
 bashScriptConfigLocation := Some(s"/etc/default/${name.value}")
 
