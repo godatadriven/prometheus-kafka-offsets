@@ -49,7 +49,7 @@ object KafkaOffsetConsumer {
     val topicCounts = Map(topic -> numThread)
     val consumerMap = consumer.createMessageStreams(topicCounts)
 
-    val consumerIterator = consumerMap.get(topic).get.head.iterator()
+    val consumerIterator = consumerMap(topic).head.iterator()
 
     consumerIterator.foreach { msg: MessageAndMetadata[Array[Byte], Array[Byte]] =>
       val offsetIdentifier = readMessageKey(ByteBuffer.wrap(msg.key))
