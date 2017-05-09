@@ -12,8 +12,8 @@ import scala.collection.mutable
 
 object KafkaOffsetConsumer {
 
-  val consumerOffsets = mutable.Map[OffsetIdentifier, CountOnTime]()
-  val logSize = mutable.Map[LogSizeIdentifier, CountOnTime]()
+  val consumerOffsets: mutable.Map[OffsetIdentifier, CountOnTime] = mutable.Map[OffsetIdentifier, CountOnTime]()
+  val logSize: mutable.Map[LogSizeIdentifier, CountOnTime] = mutable.Map[LogSizeIdentifier, CountOnTime]()
 
   case class MessageValueStructAndVersion(value: Struct, version: Short)
 
@@ -32,16 +32,16 @@ object KafkaOffsetConsumer {
     new Field("expire_timestamp", INT64))
 
   def run(): Unit = {
-    val props = new java.util.Properties();
-    props.put("zookeeper.connect", "localhost:2181");
-    props.put("group.id", "offsetTester5");
-    props.put("zookeeper.session.timeout.ms", "5000");
-//    props.put("rebalance.backoff.ms", "5000");
-    props.put("zookeeper.sync.time.ms", "2000");
-    props.put("auto.commit.interval.ms", "5000");
-//    props.put("autooffset.reset", "smallest");
-    props.put("exclude.internal.topics", "false");
-    val config = new kafka.consumer.ConsumerConfig(props);
+    val props = new java.util.Properties()
+    props.put("zookeeper.connect", "localhost:2181")
+    props.put("group.id", "offsetTester5")
+    props.put("zookeeper.session.timeout.ms", "5000")
+    //    props.put("rebalance.backoff.ms", "5000");
+    props.put("zookeeper.sync.time.ms", "2000")
+    props.put("auto.commit.interval.ms", "5000")
+    //    props.put("autooffset.reset", "smallest");
+    props.put("exclude.internal.topics", "false")
+    val config = new kafka.consumer.ConsumerConfig(props)
     val consumer = kafka.consumer.Consumer.create(config)
 
     val topic = "__consumer_offsets"

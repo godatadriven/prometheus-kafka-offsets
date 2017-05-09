@@ -54,8 +54,7 @@ mappings in Universal <+= (packageBin in Compile, sourceDirectory ) map { (_, sr
 }
 
 bashScriptExtraDefines ++= Seq(
-  """addJava "-Dconfig.file=${app_home}/../conf/app.conf"""",
-  """addJava "-Djava.security.auth.login.config=/usr/share/prometheus-kafka-offsets/conf/prometheus-kafka-offsets-jaas.conf""""
+  """addJava "-Dconfig.file=${app_home}/../conf/app.conf""""
 )
 
 bashScriptConfigLocation := Some(s"/etc/default/${name.value}")
@@ -71,5 +70,5 @@ fullClasspath in Revolver.reStart ++= (fullClasspath in Compile).value
 // Run things in a forked JVM, so we can set the options below.
 fork in run := true
 
-Keys.mainClass in (Compile) := Some("com.godatadriven.kafka.offset.Boot")
+Keys.mainClass in Compile := Some("com.godatadriven.kafka.offset.Boot")
 assemblyJarName in assembly := "prometheus-kafka-offsets_2.10-1.0.jar"

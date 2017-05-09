@@ -1,6 +1,7 @@
 package com.godatadriven.kafka.offset
 
-import akka.actor.Actor
+import akka.actor.{Actor, ActorContext}
+import akka.actor.Actor.Receive
 import spray.http.MediaTypes._
 import spray.routing._
 
@@ -10,19 +11,19 @@ class RestServiceActor extends Actor with RestService {
 
   // the HttpService trait defines only one abstract member, which
   // connects the services environment to the enclosing actor or test
-  def actorRefFactory = context
+  def actorRefFactory: ActorContext = context
 
   // this actor only runs our route, but you could add
   // other things here, like request stream processing
   // or timeout handling
-  def receive = runRoute(myRoute)
+  def receive: Receive = runRoute(myRoute)
 }
 
 
 // this trait defines our service behavior independently from the service actor
 trait RestService extends HttpService {
 
-  val myRoute =
+  val myRoute: Route =
     path("") {
       get {
         respondWithMediaType(`text/html`) {

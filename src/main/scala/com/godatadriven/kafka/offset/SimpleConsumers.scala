@@ -1,15 +1,15 @@
 package com.godatadriven.kafka.offset
 
-import com.google.gson.GsonBuilder
+import com.google.gson.{Gson, GsonBuilder}
 import kafka.consumer.SimpleConsumer
 import org.apache.zookeeper.ZooKeeper
 
 import scala.collection.JavaConversions._
 
 class SimpleConsumers(zookeeper: ZooKeeper) {
-  val gson = new GsonBuilder().create()
+  val gson: Gson = new GsonBuilder().create()
 
-  val children = zookeeper.getChildren("/brokers/ids", false).map(id => {
+  val children: Map[String, SimpleConsumer] = zookeeper.getChildren("/brokers/ids", false).map(id => {
     val brokerInfoJson: String = new String(zookeeper.getData("/brokers/ids/" + id, false, null))
 
     val brokerInfo = gson.fromJson(brokerInfoJson, classOf[BrokerInfo])

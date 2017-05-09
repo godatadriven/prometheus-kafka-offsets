@@ -14,7 +14,6 @@ RPM structure:
     /usr/share/prometheus-kafka-offsets/bin/prometheus-kafka-offsets
     /usr/share/prometheus-kafka-offsets/conf
     /usr/share/prometheus-kafka-offsets/conf/app.conf
-    /usr/share/prometheus-kafka-offsets/conf/prometheus-kafka-offsets-jaas.conf
     /usr/share/prometheus-kafka-offsets/lib/*
     /var/log/prometheus-kafka-offsets
     /var/run/prometheus-kafka-offsets

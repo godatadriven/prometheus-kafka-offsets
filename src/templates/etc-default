@@ -21,7 +21,6 @@
 # Setting JAVA_OPTS
 # -----------------
 # JAVA_OPTS="-Dpidfile.path=/var/run/${{app_name}}/play.pid $JAVA_OPTS"
-# JAVA_OPTS="-Djava.security.auth.login.config=/usr/share/prometheus-kafka-offsets/conf/prometheus-kafka-offsets-jaas.conf"
 
 # Setting PIDFILE
 # ---------------

@@ -1,11 +1,11 @@
 package com.godatadriven.kafka.offset
 
-import com.google.gson.GsonBuilder
+import com.google.gson.{Gson, GsonBuilder}
 import org.apache.kafka.common.protocol.SecurityProtocol
 import org.specs2.mutable.Specification
 
 class BrokerInfoTest extends Specification {
-  val gson = new GsonBuilder().create()
+  val gson: Gson = new GsonBuilder().create()
 
   "Brokerinfo host should" >> {
     "return host if host is filled" >> {
