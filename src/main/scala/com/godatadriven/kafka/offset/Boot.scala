@@ -8,6 +8,13 @@ import akka.util.Timeout
 import scala.concurrent.duration._
 
 object Boot extends App {
+  val thread = new Thread {
+    override def run {
+      KafkaOffsetConsumer.run()
+    }
+  }
+  thread.start
+
   // we need an ActorSystem to host our application in
   implicit val system = ActorSystem("on-spray-can")
 
