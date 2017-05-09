@@ -91,7 +91,7 @@ object KafkaOffsetCalculator {
     try {
       zookeeper.getChildren("/consumers/%s/offsets".format(consumer), false).map((_, consumer))
     } catch {
-      case e: NoNodeException =>
+      case _: NoNodeException =>
         mutable.Buffer.empty
     }
   }
@@ -108,7 +108,7 @@ object KafkaOffsetCalculator {
 
       Some(CountOnTime(stat.getMtime, offset))
     } catch {
-      case e: NoNodeException =>
+      case _: NoNodeException =>
         None
     }
   }

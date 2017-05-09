@@ -14,7 +14,7 @@ class BrokerInfo(private[this] val endpoints: Array[String],
       try {
         Some(new URI(endpoint))
       } catch {
-        case e: URISyntaxException => None
+        case _: URISyntaxException => None
       }
     }
   }
