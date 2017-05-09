@@ -63,11 +63,14 @@ object KafkaOffsetCalculator {
       val offsetOnTime = item._2
       val logSizeOnTime = KafkaOffsetConsumer.logSize.get(LogSizeIdentifier(item._1.topic, item._1.partition))
       val c: Long = logSizeOnTime.map(_.offset).getOrElse(0)
-      result ++= "kafka_offset{topic=\"%s\",consumer=\"%s\",partition=\"%s\"} %d\n".format(offsetIdentifier.topic, offsetIdentifier.group, offsetIdentifier.partition, offsetOnTime.offset)
-      result ++= "kafka_lag{topic=\"%s\",consumer=\"%s\",partition=\"%s\"} %d\n".format(offsetIdentifier.topic, offsetIdentifier.group, offsetIdentifier.partition, c - offsetOnTime.offset)
+      result ++=
+        s"""kafka_offset{topic="${offsetIdentifier.topic}",consumer="${offsetIdentifier.group}",partition="${offsetIdentifier.partition}"} ${offsetOnTime.offset}\n"""
+      result ++=
+        s"""kafka_lag{topic="${offsetIdentifier.topic}",consumer="${offsetIdentifier.group}",partition="${offsetIdentifier.partition}"} ${c - offsetOnTime.offset}\n"""
     }
     KafkaOffsetConsumer.logSize.foreach{ item =>
-      result ++= "kafka_logSize{topic=\"%s\",partition=\"%s\"} %d\n".format(item._1.topic, item._1.partition, item._2.offset)
+      result ++=
+        s"""kafka_logSize{topic="${item._1.topic}",partition="${item._1.partition}"} ${item._2.offset}\n"""
     }
 
     result ++= "\n"
