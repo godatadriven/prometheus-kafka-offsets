@@ -33,22 +33,4 @@ class BrokerInfoTest extends Specification {
     }
   }
 
-  "Brokerinfo securityProtocol should" >> {
-    "return PLAINTEXT if no endpoint is not filled" >> {
-      val brokerInfo = gson.fromJson("{\"jmx_port\":-1,\"timestamp\":\"1459185255551\",\"host\":\"ron\",\"version\":1,\"port\":9092}", classOf[BrokerInfo])
-      brokerInfo.securityProtocol must equalTo(SecurityProtocol.PLAINTEXT)
-    }
-    "return PLAINTEXTSASL if endpoinst is filled" >> {
-      val brokerInfo = gson.fromJson("{\"jmx_port\":-1,\"timestamp\":\"1459185255551\",\"endpoints\": [\"PLAINTEXTSASL://ron:9092\"],\"host\":\"\",\"version\":1,\"port\":-1}", classOf[BrokerInfo])
-      brokerInfo.securityProtocol must equalTo(SecurityProtocol.PLAINTEXTSASL)
-    }
-//    "return SASL_PLAINTEXT if endpoinst is filled with this schema" >> {
-//      val brokerInfo = gson.fromJson("{\"jmx_port\":-1,\"timestamp\":\"1459185255551\",\"endpoints\": [\"SASL_PLAINTEXT://ron:9092\"],\"host\":\"\",\"version\":1,\"port\":-1}", classOf[BrokerInfo])
-//      brokerInfo.getSecurityProtocol must equalTo(SecurityProtocol.SASL_PLAINTEXT)
-//    }
-    "return PLAINTEXT if endpoinst is filled with this schema" >> {
-      val brokerInfo = gson.fromJson("{\"jmx_port\":-1,\"timestamp\":\"1459185255551\",\"endpoints\": [\"PLAINTEXT://ron:9092\"],\"host\":\"\",\"version\":1,\"port\":-1}", classOf[BrokerInfo])
-      brokerInfo.securityProtocol must equalTo(SecurityProtocol.PLAINTEXT)
-    }
-  }
 }

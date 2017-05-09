@@ -16,8 +16,8 @@ val sprayV = "1.3.3"
 
 resolvers += "spray repo" at "http://repo.spray.io"
 
-libraryDependencies += "org.apache.kafka" %% "kafka" % "0.9.0.2.3.4.0-3485"
-libraryDependencies += "org.apache.kafka" % "kafka-clients" % "0.9.0.2.3.4.0-3485"
+libraryDependencies += "org.apache.kafka" %% "kafka" % "0.10.0.0"
+libraryDependencies += "org.apache.kafka" % "kafka-clients" % "0.10.0.0"
 libraryDependencies += "com.google.code.gson" % "gson" % "2.6.2"
 
 libraryDependencies += "io.spray" %% "spray-json" % "1.3.1"

@@ -13,7 +13,7 @@ class SimpleConsumers(zookeeper: ZooKeeper) {
     val brokerInfoJson: String = new String(zookeeper.getData("/brokers/ids/" + id, false, null))
 
     val brokerInfo = gson.fromJson(brokerInfoJson, classOf[BrokerInfo])
-    id -> new SimpleConsumer(brokerInfo.getHost, brokerInfo.getPort, 10000, 100000, "consumerOffsetChecker", brokerInfo.securityProtocol)
+    id -> new SimpleConsumer(brokerInfo.getHost, brokerInfo.getPort, 10000, 100000, "consumerOffsetChecker")
   }).toMap
 
   def get(key: String): Option[SimpleConsumer] = {

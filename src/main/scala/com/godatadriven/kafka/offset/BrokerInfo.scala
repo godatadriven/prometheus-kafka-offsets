@@ -1,9 +1,6 @@
 package com.godatadriven.kafka.offset
 
 import java.net.{URI, URISyntaxException}
-import java.util.Locale
-
-import org.apache.kafka.common.protocol.SecurityProtocol
 
 class BrokerInfo(private[this] val endpoints: Array[String],
                  private[this] val host: String,
@@ -38,17 +35,4 @@ class BrokerInfo(private[this] val endpoints: Array[String],
     }
   }
 
-  def securityProtocol: SecurityProtocol = {
-    firstEndpointUri match {
-      case Some(uri) =>
-        val scheme = uri.getScheme.toUpperCase(Locale.ROOT)
-        if (scheme == SecurityProtocol.PLAINTEXTSASL.name)
-          SecurityProtocol.PLAINTEXTSASL
-        else if (scheme == SecurityProtocol.SASL_PLAINTEXT.name)
-          SecurityProtocol.SASL_PLAINTEXT
-        else
-          SecurityProtocol.PLAINTEXT
-      case None => SecurityProtocol.PLAINTEXT
-    }
-  }
 }
