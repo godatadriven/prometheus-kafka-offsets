@@ -59,7 +59,7 @@ bashScriptExtraDefines ++= Seq(
 
 bashScriptConfigLocation := Some(s"/etc/default/${name.value}")
 
-defaultLinuxInstallLocation := "/usr/share"
+defaultLinuxInstallLocation := "/opt"
 // End of RPM config
 
 // If running locally, ensure that "provided" dependencies are on the classpath.
