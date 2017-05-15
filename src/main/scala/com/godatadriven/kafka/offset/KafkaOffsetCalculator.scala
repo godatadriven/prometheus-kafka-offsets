@@ -1,18 +1,20 @@
 package com.godatadriven.kafka.offset
 
 import java.util
+import java.util.concurrent.CountDownLatch
 
 import com.google.gson.{Gson, GsonBuilder}
 import kafka.api.{OffsetRequest, OffsetResponse, PartitionOffsetRequestInfo}
 import kafka.common.TopicAndPartition
 import kafka.consumer.SimpleConsumer
 import org.apache.zookeeper.KeeperException.NoNodeException
-import org.apache.zookeeper.ZooKeeper
+import org.apache.zookeeper.{WatchedEvent, Watcher, ZooKeeper}
 import resource._
 
 import scala.collection.JavaConversions._
 import scala.collection.{immutable, mutable}
 import com.typesafe.config.ConfigFactory
+import org.apache.zookeeper.Watcher.Event.KeeperState
 import org.apache.zookeeper.data.Stat
 
 import scala.collection.mutable.ArrayBuffer
@@ -21,6 +23,7 @@ case class PartitionInfo(leader: String)
 
 object KafkaOffsetCalculator {
   val gson: Gson = new GsonBuilder().create()
+  val connSignal: CountDownLatch= new CountDownLatch(0);
 
   def main(args: Array[String]) {
     println(getTopicOffset)
@@ -31,7 +34,7 @@ object KafkaOffsetCalculator {
     val config = ConfigFactory.load
     val zookeeperUrl = config.getString("zookeeper.url")
 
-    managed(new ZooKeeper(zookeeperUrl, 10000, null, true)) acquireAndGet {
+    managed(connect(zookeeperUrl)) acquireAndGet {
       zookeeper => managed(new SimpleConsumers(zookeeper)) acquireAndGet {
         simpleConsumers =>
           val topicsConsumers = getTopicConsumers(zookeeper)
@@ -56,6 +59,18 @@ object KafkaOffsetCalculator {
             })
           })
       }
+    }
+
+    def connect(host: String): ZooKeeper = {
+      val zk = new ZooKeeper(host, 10000, new Watcher() {
+        def process(event: WatchedEvent) {
+          if (event.getState == KeeperState.SyncConnected) {
+            connSignal.countDown()
+          }
+        }
+      }, true)
+      connSignal.await()
+      zk
     }
 
     KafkaOffsetConsumer.consumerOffsets.foreach { item =>
