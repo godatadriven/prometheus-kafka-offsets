@@ -23,7 +23,6 @@ case class PartitionInfo(leader: String)
 
 object KafkaOffsetCalculator {
   val gson: Gson = new GsonBuilder().create()
-  val connSignal: CountDownLatch= new CountDownLatch(0);
 
   def main(args: Array[String]) {
     println(getTopicOffset)
@@ -62,6 +61,7 @@ object KafkaOffsetCalculator {
     }
 
     def connect(host: String): ZooKeeper = {
+      val connSignal: CountDownLatch= new CountDownLatch(1);
       val zk = new ZooKeeper(host, 10000, new Watcher() {
         def process(event: WatchedEvent) {
           if (event.getState == KeeperState.SyncConnected) {
