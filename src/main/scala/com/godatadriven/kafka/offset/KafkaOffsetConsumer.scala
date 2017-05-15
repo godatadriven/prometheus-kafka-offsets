@@ -52,9 +52,13 @@ object KafkaOffsetConsumer {
     val consumerIterator = consumerMap(topic).head.iterator()
 
     consumerIterator.foreach { msg: MessageAndMetadata[Array[Byte], Array[Byte]] =>
-      val offsetIdentifier = readMessageKey(ByteBuffer.wrap(msg.key))
-      val offsetOnTime = readMessageValue(ByteBuffer.wrap(msg.message), offsetIdentifier)
-      consumerOffsets.put(offsetIdentifier,offsetOnTime)
+      try {
+        val offsetIdentifier = readMessageKey(ByteBuffer.wrap(msg.key))
+        val offsetOnTime = readMessageValue(ByteBuffer.wrap(msg.message), offsetIdentifier)
+        consumerOffsets.put(offsetIdentifier, offsetOnTime)
+      } catch {
+        case e: Exception => print(e.getMessage +  "message: " + msg.message().toString)
+      }
     }
   }
 
